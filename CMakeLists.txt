@@ -126,7 +126,8 @@ ENDIF ()
 OPTION (MSGPACK_BUILD_EXAMPLES "Build msgpack examples." ON)
 
 OPTION (MSGPACK_ENABLE_CXX "Enable C++ interface." ON)
-OPTION (MSGPACK_ENABLE_SHARED "Build shared libaries in addition to static libraries." ON)
+OPTION (MSGPACK_ENABLE_SHARED "Build shared libraries." ON)
+OPTION (MSGPACK_ENABLE_STATIC "Build static libraries." ON)
 
 INCLUDE (CheckCXXSourceCompiles)
 CHECK_CXX_SOURCE_COMPILES ("
@@ -165,12 +166,15 @@ IF (MSGPACK_ENABLE_SHARED)
     )
 ENDIF ()
 
-ADD_LIBRARY (msgpackc-static STATIC
-    ${msgpackc_SOURCES}
-    ${msgpackc_HEADERS}
-)
+IF (MSGPACK_ENABLE_STATIC)
+  ADD_LIBRARY (msgpackc-static STATIC
+      ${msgpackc_SOURCES}
+      ${msgpackc_HEADERS}
+  )
 
-SET_TARGET_PROPERTIES (msgpackc-static PROPERTIES OUTPUT_NAME "msgpackc")
+  SET_TARGET_PROPERTIES (msgpackc-static PROPERTIES OUTPUT_NAME "msgpackc")
+ENDIF ()
+
 IF (MSGPACK_ENABLE_SHARED)
     IF (MSVC)
         SET_TARGET_PROPERTIES (msgpackc PROPERTIES IMPORT_SUFFIX "_import.lib")
@@ -193,14 +197,18 @@ IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" ST
     IF (MSGPACK_ENABLE_SHARED)
         SET_PROPERTY (TARGET msgpackc APPEND_STRING PROPERTY COMPILE_FLAGS "-Wall -Wextra -Werror -g -O3 -DPIC")
     ENDIF ()
-    SET_PROPERTY (TARGET msgpackc-static APPEND_STRING PROPERTY COMPILE_FLAGS "-Wall -Wextra -Werror -g -O3" )
+    IF (MSGPACK_ENABLE_STATIC)
+        SET_PROPERTY (TARGET msgpackc-static APPEND_STRING PROPERTY COMPILE_FLAGS "-Wall -Wextra -Werror -g -O3" )
+    ENDIF ()
 ENDIF ()
 
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     IF (MSGPACK_ENABLE_SHARED)
         SET_PROPERTY (TARGET msgpackc APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-mismatched-tags")
     ENDIF ()
-    SET_PROPERTY (TARGET msgpackc-static APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-mismatched-tags")
+    IF (MSGPACK_ENABLE_STATIC)
+        SET_PROPERTY (TARGET msgpackc-static APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-mismatched-tags")
+    ENDIF ()
 ENDIF ()
 
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
@@ -228,8 +236,12 @@ IF (MSGPACK_BUILD_EXAMPLES)
 ENDIF ()
 
 IF (MSGPACK_ENABLE_SHARED)
-    SET (MSGPACK_INSTALLTARGETS msgpackc msgpackc-static)
-ELSE()
+    IF (MSGPACK_ENABLE_STATIC)
+        SET (MSGPACK_INSTALLTARGETS msgpackc msgpackc-static)
+    ELSE()
+      SET (MSGPACK_INSTALLTARGETS msgpackc)
+    ENDIF ()
+ELSEIF(MSGPACK_ENABLE_STATIC)
     SET (MSGPACK_INSTALLTARGETS msgpackc-static)
 ENDIF ()
 
