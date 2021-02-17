@@ -1,3 +1,31 @@
+# 2017-08-04 version 2.1.5
+  * Improve cross platform configuration (#624)
+  * Add boost asio examples (including zlib) (#610)
+  * Remove some warnings (#611)
+  * Fix unpack visitor to treat float32/64 correctly (#613)
+  * Improve documents (#616)
+  * Fix alignment problem on some platform (#617, #518)
+  * Fix conflict std::tuple, std::pair, and boost::fusion::sequence problem (#619)
+
+# 2017-08-03 version 2.1.4 (Invalid)
+  * See https://github.com/msgpack/msgpack-c/issues/623
+
+# 2017-06-15 version 2.1.3
+  * Improve build system (#603)
+  * Add C++17 adaptors `std::optional` and `std::string_view`. (#607, #608)
+  * Improve cross platform configuration (#601)
+  * Remove some warnings (#599, #602, #605)
+
+# 2017-06-07 version 2.1.2
+
+* Improve documents (#565)
+  * Fix empty map parse bug (#568)
+  * Improve build system (#569, #570, #572, #579, #591, #592)
+  * Remove some warnings (#574, #578, #586, #588)
+  * Improve cross platform configuration (#577, #582)
+  * Add cmake package config support (#580)
+  * Fix streaming unpack bug (#585)
+
 # 2017-02-04 version 2.1.1
 
   * Fix unpacker's buffer management bug (#561)
