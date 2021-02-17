@@ -205,23 +205,24 @@ IF (MSGPACK_ENABLE_STATIC)
   )
 
   SET_TARGET_PROPERTIES (msgpackc-static PROPERTIES OUTPUT_NAME "msgpackc")
+
+  TARGET_INCLUDE_DIRECTORIES (msgpackc-static
+      PUBLIC
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+          $<INSTALL_INTERFACE:include>
+      PRIVATE
+          ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+  IF (NOT MSGPACK_ENABLE_SHARED)
+      # Add alias for subdirectories
+      ADD_LIBRARY (msgpackc ALIAS msgpackc-static)
+  ENDIF ()
+
+  SET_TARGET_PROPERTIES (msgpackc-static PROPERTIES OUTPUT_NAME "msgpackc")
 ENDIF ()
 
-TARGET_INCLUDE_DIRECTORIES (msgpackc-static
-    PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-IF (NOT MSGPACK_ENABLE_SHARED)
-    # Add alias for subdirectories
-    ADD_LIBRARY (msgpackc ALIAS msgpackc-static)
-ENDIF ()
-
-SET_TARGET_PROPERTIES (msgpackc-static PROPERTIES OUTPUT_NAME "msgpackc")
 IF (MSGPACK_ENABLE_SHARED)
     IF (MSVC)
         SET_TARGET_PROPERTIES (msgpackc PROPERTIES IMPORT_SUFFIX "_import.lib")
